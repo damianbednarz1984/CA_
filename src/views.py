@@ -3,7 +3,6 @@ from flask_login import login_required, current_user
 from flask_mail import Mail, Message
 
 
-
 views = Blueprint("views", __name__)
 mail = Mail()
 
@@ -12,6 +11,16 @@ mail = Mail()
 def home():
 	if request.method == "GET":
 		return render_template("home.html", user=current_user)
+	if request.method == "POST":
+		full_name = request.form.get("full_name")
+		email = request.form.get("email")
+		subject = request.form.get("subject")
+		msg = request.form.get("message")
+		mail_template = Message("A new contact submission!", sender='damianbednarz1984@gmail.com', recipients=['damianbednarz1984@gmail.com'])
+		mail_template.body = f"Name : {full_name}\nFrom : {email}\nSubject : {subject}\n\n{msg}"
+		mail.send(mail_template)
+		return jsonify("Your email has been sent successfully, We'll response as soon as posible... Thank you")
+
 	
 
 	
