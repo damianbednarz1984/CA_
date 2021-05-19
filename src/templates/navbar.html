@@ -1,0 +1,44 @@
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="#"><strong>Bed &amp; Breakfast <i class="fas fa-utensils"></i></strong></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarMenu">
+      <!--Links-->
+      <ul class="navbar-nav ml-auto smooth-scroll">
+{% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('views.home') }}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Rooms</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('views.contact') }}">Contact</a>
+        </li>
+        <li class="nav-item avatar">
+          <a class="nav-link p-0 ml-5" href="#" title="Profile">
+            <span class="yellow-text">Hi, </span>{{ user.fname }}
+            <img src="{{ url_for('static', filename='img/user_avatars/') }}{{ user.avatar }}" class="rounded-circle z-depth-0" height="40">
+          </a>
+        </li>
+        <li class="nav-item ml-3 mt-2"><a href="{{ url_for('auth.logout') }}" class="text-white" title="Logout"><i class="fas fa-sign-out-alt fa-lg"></i></a></li>
+{% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('views.home') }}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Rooms</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('views.contact') }}">Contact</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link btn btn-primary btn-sm" href="{{ url_for('auth.login') }}"><i class="fas fa-user"></i> Sign in</a>
+        </li>
+{% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>

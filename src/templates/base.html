@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<title>{% block title %}{% endblock title %}</title>
+<link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
+<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/materialUI.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body class="intro-page transport-lp">
+
+{% block content %}
+{% endblock content %}
+
+<footer class="page-footer mdb-color darken-3 text-center text-md-left pt-5">
+
+<script>
+$(document).ready(function(){
+$("#res_div").hide();
+$("#contact_form").on("submit", function(e){
+    e.preventDefault();
+    $("#submit_btn").html("Sending <img src="+ "{{ url_for('static', filename='img/loader.gif') }}" +" style='width: 20px;'>");
+    $("#submit_btn").attr("disabled", true);
+    $.ajax({
+        url: "{{ url_for('views.contact') }}",
+        type: "POST",
+        data: $(this).serialize(),
+        success: function(data){
+            $("#res_msg").html(data);
+            $("#contact_form").hide();
+            $("#res_div").show();
+        }
+    });
+});
+});
+</script>
+
+</body>
+</html>
