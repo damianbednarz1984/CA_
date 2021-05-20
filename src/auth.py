@@ -71,3 +71,34 @@ def sign_up():
 @auth.route("/reset_password")
 def reset_password():
     return render_template("forgot_pass.html", user=current_user)
+
+
+@auth.route("/change_password", methods=["GET", "POST"])
+@login_required
+def change_password():
+    
+    if request.method == "GET":
+        return render_template("user/change_password.html", user=current_user)
+    
+    if request.method == "POST":
+        old_pass = request.form.get("old_pass")
+        new_pass = request.form.get("new_pass")
+        re_pass = request.form.get("re_pass")
+ 
+        if new_pass == re_pass:
+            
+            if check_password_hash(current_user.password, old_pass):
+                gen_hash_pass = generate_password_hash(new_pass, method="sha256")
+                User.query.filter_by(id=current_user.id).update(dict(password=gen_hash_pass))
+          
+                db.session.commit()
+                flash("Your password has been changed successfully", category='success')
+                return redirect(url_for('auth.change_password'))
+            
+            else:
+                flash("Old password doesn't match!", category='error')
+                return redirect(url_for('auth.change_password'))
+       
+        else:
+            flash("Couldn't match New password and Confirm password!", category='error')
+            return redirect(url_for('auth.change_password'))

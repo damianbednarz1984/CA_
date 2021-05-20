@@ -52,3 +52,24 @@ def contact():
 @login_required
 def user_dashboard():
 	return render_template("user/user_dashboard.html", user=current_user)
+
+# this route for handle changing user password from admin panel
+@views.route("/change_user_pass", methods=["POST"])
+@login_required
+def change_user_pass():
+	
+	pass_user_id = request.form.get("pass_user_id")
+	old_pass = request.form.get("old_pass")
+	new_pass = request.form.get("new_pass")
+	
+	fetch_old_pass = User.query.filter_by(id=pass_user_id).first()
+	
+	if check_password_hash(fetch_old_pass.password, old_pass):
+		gen_new_hash = generate_password_hash(new_pass, method="sha256")
+		User.query.filter_by(id=pass_user_id).update(dict(password=gen_new_hash))
+		db.session.commit()
+		flash("Password has changed successfully", category="success")
+		return redirect(url_for("views.user_modify", user_id=pass_user_id))
+	else:
+		flash("Old password doesn't match!", category="error")
+		return redirect(url_for("views.user_modify", user_id=pass_user_id))
