@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, flash, jsonify
 from flask_login import login_required, current_user
 from flask_mail import Mail, Message
+from .models import Rooms
 
 
 views = Blueprint("views", __name__)
@@ -23,7 +24,10 @@ def home():
 
 	
 
-	
+@views.route("/rooms")
+def rooms():
+	rooms = Rooms.query.all()
+	return render_template("rooms.html", user=current_user, room=rooms)	
 
 
 @views.route("/contact", methods=["GET", "POST"])
@@ -42,7 +46,7 @@ def contact():
 		mail.send(mail_template)
 		return jsonify("Your email has been sent successfully, We'll response as soon as posible... Thank you")
 
-# future function for user dashboard 
-# @views.route("/user_dashboard") 
-# @login_required
-# def user_dashboard():
+@views.route("/user_dashboard")
+@login_required
+def user_dashboard():
+	return render_template("user/user_dashboard.html", user=current_user)

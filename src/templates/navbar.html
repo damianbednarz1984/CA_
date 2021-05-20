@@ -12,13 +12,13 @@
           <a class="nav-link" href="{{ url_for('views.home') }}">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Rooms</a>
+          <a class="nav-link" href="{{ url_for('views.rooms') }}">Rooms</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('views.contact') }}">Contact</a>
         </li>
         <li class="nav-item avatar">
-          <a class="nav-link p-0 ml-5" href="#" title="Profile">
+          <a class="nav-link p-0 ml-5" href="{{ url_for('views.user_dashboard') }}" title="Profile">
             <span class="yellow-text">Hi, </span>{{ user.fname }}
             <img src="{{ url_for('static', filename='img/user_avatars/') }}{{ user.avatar }}" class="rounded-circle z-depth-0" height="40">
           </a>
@@ -29,7 +29,7 @@
           <a class="nav-link" href="{{ url_for('views.home') }}">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Rooms</a>
+          <a class="nav-link" href="{{ url_for('views.rooms') }}">Rooms</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('views.contact') }}">Contact</a>

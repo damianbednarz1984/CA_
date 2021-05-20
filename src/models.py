@@ -15,3 +15,12 @@ class User(db.Model, UserMixin):
     registered_on = db.Column(db.DateTime, default=datetime.now())
 
 
+class Rooms(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	title = db.Column(db.String(100))
+	description = db.Column(db.Text)
+	thumb = db.Column(db.String(225))
+	price = db.Column(db.Integer)
+	bed = db.Column(db.Integer)
+	lunch = db.Column(db.Boolean(), default=False)
+	wifi = db.Column(db.Boolean(), default=False)

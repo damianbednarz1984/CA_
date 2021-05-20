@@ -98,6 +98,36 @@
         <div class="container-fluid text-light">&copy; 2021 Bed & Breakfast <i class="fas fa-utensils"></i> | All Rights Reserved</div>
       </div>
       <!--/Copyright-->
+
+    </footer>
+    <!--/Footer-->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/materialUI.js') }}"></script>
+    <script>
+        new WOW().init();
+    </script>
+    <script>
+    $(document).ready(function(){
+    $("#res_div").hide();
+    $("#contact_form").on("submit", function(e){
+        e.preventDefault();
+        $("#submit_btn").html("Sending <img src="+ "{{ url_for('static', filename='img/loader.gif') }}" +" style='width: 20px;'>");
+        $("#submit_btn").attr("disabled", true);
+        $.ajax({
+            url: "{{ url_for('views.contact') }}",
+            type: "POST",
+            data: $(this).serialize(),
+            success: function(data){
+                $("#res_msg").html(data);
+                $("#contact_form").hide();
+                $("#res_div").show();
+            }
+        });
+    });
+    });
+</script>
 <script>
 $(document).ready(function(){
 $("#res_div").hide();
