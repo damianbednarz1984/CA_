@@ -7,6 +7,8 @@ from .models import Rooms
 views = Blueprint("views", __name__)
 mail = Mail()
 
+
+
 @views.route("/", methods=["GET", "POST"])
 @views.route("/home", methods=["GET", "POST"])
 def home():
