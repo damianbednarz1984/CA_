@@ -73,3 +73,7 @@ def change_user_pass():
 	else:
 		flash("Old password doesn't match!", category="error")
 		return redirect(url_for("views.user_modify", user_id=pass_user_id))
+
+
+
+	
