@@ -53,7 +53,7 @@ def contact():
 def user_dashboard():
 	return render_template("user/user_dashboard.html", user=current_user)
 
-# this route for handle changing user password from admin panel
+# this route for handle changing user password 
 @views.route("/change_user_pass", methods=["POST"])
 @login_required
 def change_user_pass():
@@ -74,6 +74,23 @@ def change_user_pass():
 		flash("Old password doesn't match!", category="error")
 		return redirect(url_for("views.user_modify", user_id=pass_user_id))
 
-
+@views.route("/user_personal_info", methods=["GET", "POST"])
+@login_required
+def user_personal_info():
+	fname = request.form.get("fname")
+	lname = request.form.get("lname")
+	email = request.form.get("email")
+	phone = request.form.get("phone")
+	birth = request.form.get("birth")
+	country = request.form.get("country")
+	gender = request.form.get("gender")
+	city = request.form.get("city")
+	zip_code = request.form.get("zip_code")
+	address = request.form.get("address")
+	user_id = request.form.get("user_id")
+	modify_user = User.query.filter_by(id=user_id).update(dict(fname=fname, lname=lname, email=email, phone=phone, date_of_birth=birth, country=country, gender=gender, city=city, zip_code=zip_code, address=address))
+	db.session.commit()
+	default_avatar()
+	return redirect(url_for('views.user_dashboard'))
 
 	
