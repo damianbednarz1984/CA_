@@ -67,10 +67,11 @@ def sign_up():
 
     return render_template("sign_up.html", user=current_user)
 
-
-@auth.route("/reset_password")
+@auth.route("/reset_password", methods=["GET", "POST"])
 def reset_password():
-    return render_template("forgot_pass.html", user=current_user)
+    if request.method == "GET":
+        return render_template("forgot_pass.html", user=current_user)
+
 
 
 @auth.route("/change_password", methods=["GET", "POST"])

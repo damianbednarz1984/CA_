@@ -19,14 +19,14 @@
     </div>
     <!--Body-->
     <div class="modal-body text-center mb-1">
-
-      <div class="md-form ml-0 mr-0">
-        <input type="password" type="text" id="form29" class="form-control form-control-sm validate ml-0">
-        <label data-error="wrong" data-success="right" for="form29" class="ml-0">Your email address</label>
+ <form action="{{ url_for('auth.reset_password') }}" method="POST"></form>
+    <div class="md-form ml-0 mr-0">
+      <input type="email" name="email" class="form-control form-control-sm validate ml-0" id="email" required>
+      <label data-error="wrong" data-success="right" for="form29" class="ml-0">Your email address</label>
       </div>
 
       <div class="text-center mt-4">
-        <button class="btn btn-danger btn-rounded mt-1">Send Reset Email</button>
+        <button type="submit" class="btn btn-danger btn-rounded mt-1">Send Reset Email</button>
       </div>
     </div>
   </div>
