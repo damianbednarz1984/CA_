@@ -1,12 +1,18 @@
-from flask import Blueprint, render_template, request, flash, jsonify
+from flask import Blueprint, render_template,redirect, request, flash, jsonify,url_for
 from flask_login import login_required, current_user
 from flask_mail import Mail, Message
-from .models import Rooms
+from .models import Rooms, User
+from . import db
+import os
+
 
 
 views = Blueprint("views", __name__)
 mail = Mail()
 
+def default_avatar():
+	if not os.path.exists("src/static/img/user_avatars/default_user_img.png"):
+		shutil.copy("src/static/img/default_user_img.png", "src/static/img/user_avatars/default_user_img.png")
 
 
 @views.route("/", methods=["GET", "POST"])
@@ -51,6 +57,7 @@ def contact():
 @views.route("/user_dashboard")
 @login_required
 def user_dashboard():
+	default_avatar()
 	return render_template("user/user_dashboard.html", user=current_user)
 
 # this route for handle changing user password 
