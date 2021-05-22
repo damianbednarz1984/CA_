@@ -72,6 +72,27 @@ def reset_password():
     if request.method == "GET":
         return render_template("forgot_pass.html", user=current_user)
 
+@auth.route("/password_reset_confirmation_url/<string:hashCode>")
+def password_reset_confirmation_url(hashCode):
+ 
+    fetch_hash = User.query.filter_by(hashCode=hashCode).first()
+    if fetch_hash:
+       
+        return render_template("set_new_pass.html", user_id=fetch_hash.id, user=current_user)
+    else:
+        flash("Password reset link has been expired", category="error")
+        return redirect(url_for("auth.login"))
+
+@auth.route("/set_new_pass", methods=["GET", "POST"])
+def set_new_pass():
+    if request.method == "POST":
+        password = request.form.get("password")
+        user_id = request.form.get("user_id")
+        User.query.filter_by(id=user_id).update(dict(password=generate_password_hash(password, method="sha256"), hashCode=0))
+        db.session.commit()
+        # if password has changed then redirect to login page
+        flash("Your password has been changed successfully", category="success")
+        return redirect(url_for('auth.login'))
 
 
 @auth.route("/change_password", methods=["GET", "POST"])
