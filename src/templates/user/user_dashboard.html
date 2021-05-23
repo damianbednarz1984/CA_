@@ -534,7 +534,7 @@
       <div class="modal-body">
         <p class="text-center text-muted">Once you delete your account, you will never be able to recover it</p>
         <hr class="mx-auto" width="25px">
-        <form action="#" method="POST">
+        <form action="{{ url_for('auth.user_account_delete') }}" method="POST">
           <div class="form-group w-75">
              <label for="password"><small class="text-muted">Enter your password <span class="text-danger">*</span></small></label>
              <input type="password" name="password" class="form-control" required>
