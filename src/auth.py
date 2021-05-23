@@ -3,7 +3,7 @@ from .models import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 from flask_login import login_user, login_required, logout_user, current_user
-
+import os
 
 
 auth = Blueprint('auth', __name__)
@@ -124,3 +124,19 @@ def change_password():
         else:
             flash("Couldn't match New password and Confirm password!", category='error')
             return redirect(url_for('auth.change_password'))
+
+            
+@auth.route("/user_account_delete", methods=["POST"])
+@login_required
+def user_account_delete():
+    password = request.form.get("password")
+    if check_password_hash(current_user.password, password):
+        fetch_user = User.query.filter_by(id=current_user.id).first()
+        os.remove(f"src/static/img/user_avatars/{fetch_user.avatar}")
+        db.session.delete(fetch_user)
+        db.session.commit()
+        flash("Account has been deleted permanently", category="success")
+        return redirect(url_for('auth.login'))
+    else:
+        flash("Invalid password! please try again...", category="error")
+        return redirect(url_for('views.user_dashboard'))
