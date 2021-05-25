@@ -4,6 +4,9 @@ from flask_mail import Mail, Message
 from .models import Rooms, User
 from . import db
 import os
+import shutil
+from datetime import date, timedelta
+import datetime
 
 
 
@@ -13,6 +16,22 @@ mail = Mail()
 def default_avatar():
 	if not os.path.exists("src/static/img/user_avatars/default_user_img.png"):
 		shutil.copy("src/static/img/default_user_img.png", "src/static/img/user_avatars/default_user_img.png")
+
+def check_in_date(chk_in):
+    chk_in_y = int(chk_in.split('-')[0])
+    chk_in_m = int(chk_in.split('-')[1])
+    chk_in_d = int(chk_in.split('-')[2])
+    chk_in = date(chk_in_y, chk_in_m, chk_in_d)
+    return chk_in
+def check_out_date(chk_out):
+    chk_out_y = int(chk_out.split('-')[0])
+    chk_out_m = int(chk_out.split('-')[1])
+    chk_out_d = int(chk_out.split('-')[2])
+    chk_out = date(chk_out_y, chk_out_m, chk_out_d)
+    return chk_out
+def daterange(chkin, chkout):
+    for n in range(int ((chkout - chkin).days)+1):
+        yield chkin + timedelta(n)
 
 
 @views.route("/", methods=["GET", "POST"])
