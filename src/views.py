@@ -55,6 +55,15 @@ def home():
 def rooms():
 	rooms = Rooms.query.all()
 	return render_template("rooms.html", user=current_user, room=rooms)	
+	
+
+@views.route("/room_book", methods=["GET", "POST"])	
+def room_book():
+	room_id = request.args.get("room_id")
+	room_data = Rooms.query.filter_by(id=room_id).first()
+	return render_template("room_book.html", user=current_user, room_data=room_data)
+
+
 
 
 @views.route("/contact", methods=["GET", "POST"])
