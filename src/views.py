@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template,redirect, request, flash, jsonify,url_for
 from flask_login import login_required, current_user
 from flask_mail import Mail, Message
-from .models import Rooms, User
+from werkzeug.security import generate_password_hash, check_password_hash
+from .models import Rooms, User,Booking
 from . import db
 import os
 import shutil
@@ -62,6 +63,40 @@ def room_book():
 	room_id = request.args.get("room_id")
 	room_data = Rooms.query.filter_by(id=room_id).first()
 	return render_template("room_book.html", user=current_user, room_data=room_data)
+
+
+@views.route("/room_book_confirm", methods=["GET", "POST"])
+@login_required
+def room_book_confirm():
+	check_booking_expire()
+	# fetching user and room booking informations from room_book page
+	room_id = request.args.get('room_id')
+	user_id = request.args.get('user_id')
+	check_in = request.args.get('check_in')
+	check_out = request.args.get('check_out')
+	totalDays = total_days(check_in, check_out)
+
+	reserved_dates = Booking.query.filter_by(reserved_room=room_id).first()
+	if reserved_dates:
+		
+		db_date_list = ()
+		for db_dt in daterange(check_in_date(reserved_dates.chk_in_full), check_out_date(reserved_dates.chk_out_full)):
+		    db_date_list += (db_dt.strftime("%Y-%m-%d"),)
+		
+		user_in_date_list = ()
+		for user_in_dt in daterange(check_in_date(check_in), check_out_date(check_out)):
+		    user_in_date_list += (user_in_dt.strftime("%Y-%m-%d"),)
+		user_out_date_list = ()
+		for user_out_dt in daterange(check_in_date(check_in), check_out_date(check_out)):
+		    user_out_date_list += (user_out_dt.strftime("%Y-%m-%d"),)
+		if any(item in user_in_date_list for item in db_date_list) or any(item in user_out_date_list for item in db_date_list):
+			flash(chk_error_res, category="error")
+			return redirect(url_for("views.room_book", room_id=room_id))
+			
+	user_data = User.query.filter_by(id=user_id).first()
+	room_data = Rooms.query.filter_by(id=room_id).first()
+	return render_template("room_book_confirm.html", user=current_user, user_data=user_data, room_data=room_data, check_in=check_in, check_out=check_out, totalDays=totalDays, key=stripe_keys['publishable_key'])
+
 
 
 
