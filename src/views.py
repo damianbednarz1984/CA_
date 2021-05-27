@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models import Rooms, User,Booking
-from . import db
+from . import db,UPLOAD_FOLDER,  mail_user, mail_subject, mail_response
 import os
 import shutil
 from datetime import date, timedelta
@@ -33,6 +33,12 @@ def check_out_date(chk_out):
 def daterange(chkin, chkout):
     for n in range(int ((chkout - chkin).days)+1):
         yield chkin + timedelta(n)
+def check_booking_expire():	
+    today_date = datetime.datetime.today().date()	
+    room_expired = Booking.query.filter_by(expire_date=today_date).first()	
+    if room_expired:	
+    	db.session.delete(room_expired)	
+    	db.session.commit()
 
 
 @views.route("/", methods=["GET", "POST"])
@@ -63,13 +69,23 @@ def room_book():
 	room_id = request.args.get("room_id")
 	room_data = Rooms.query.filter_by(id=room_id).first()
 	return render_template("room_book.html", user=current_user, room_data=room_data)
+def total_days(check_in, check_out):
+    chk_in_y = int(check_in.split('-')[0])
+    chk_in_m = int(check_in.split('-')[1])
+    chk_in_d = int(check_in.split('-')[2])
+    chk_out_y = int(check_out.split('-')[0])
+    chk_out_m = int(check_out.split('-')[1])
+    chk_out_d = int(check_out.split('-')[2])
+    chk_in = date(chk_in_y, chk_in_m, chk_in_d)
+    chk_out = date(chk_out_y, chk_out_m, chk_out_d)
+    return (chk_out - chk_in).days
 
 
 @views.route("/room_book_confirm", methods=["GET", "POST"])
 @login_required
 def room_book_confirm():
 	check_booking_expire()
-	# fetching user and room booking informations from room_book page
+
 	room_id = request.args.get('room_id')
 	user_id = request.args.get('user_id')
 	check_in = request.args.get('check_in')
@@ -95,8 +111,7 @@ def room_book_confirm():
 			
 	user_data = User.query.filter_by(id=user_id).first()
 	room_data = Rooms.query.filter_by(id=room_id).first()
-	return render_template("room_book_confirm.html", user=current_user, user_data=user_data, room_data=room_data, check_in=check_in, check_out=check_out, totalDays=totalDays, key=stripe_keys['publishable_key'])
-
+	return render_template("room_book_confirm.html", user=current_user, user_data=user_data, room_data=room_data, check_in=check_in, check_out=check_out, totalDays=totalDays)
 
 
 
@@ -104,6 +119,8 @@ def room_book_confirm():
 @views.route("/contact", methods=["GET", "POST"])
 def contact():
 	if request.method == "GET":
+		default_avatar()
+		check_booking_expire()
 		return render_template("contact.html", user=current_user)
 	if request.method == "POST":
 		fname = request.form.get("fname")
@@ -111,11 +128,10 @@ def contact():
 		email = request.form.get("email")
 		subject = request.form.get("subject")
 		msg = request.form.get("message")
-
-		mail_template = Message("A new contact submission!", sender='damianbednarz1984@gmail.com', recipients=['damianbednarz1984@gmail.com'])
+		mail_template = Message(mail_subject, sender=mail_user, recipients=[email])
 		mail_template.body = f"Name : {fname} {lname}\nFrom : {email}\nSubject : {subject}\n\n{msg}"
 		mail.send(mail_template)
-		return jsonify("Your email has been sent successfully, We'll response as soon as posible... Thank you")
+		return jsonify(mail_response)
 
 @views.route("/user_dashboard")
 @login_required
