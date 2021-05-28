@@ -14,8 +14,10 @@ mail_smtp = ""
 mail_user = ""
 mail_pass = ""
 mail_port = 587
-mail_subject = "" # put here subject for email
-mail_response = "" 
+mail_subject = "TEST" # put here subject for email
+mail_response = "Thanks for your email" 
+
+chk_error_res = "Sorry this isn't available"
 
 def create_app():
     app = Flask(__name__)
