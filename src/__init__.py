@@ -7,7 +7,7 @@ from flask_mail import Mail
 
 db = SQLAlchemy()
 DB_NAME = "database.db"
-
+# this is the root of directory for all uploading images
 UPLOAD_FOLDER = "src/static/img/"
 
 mail_smtp = ""
@@ -18,7 +18,7 @@ mail_subject = "TEST" # put here subject for email
 mail_response = "Thanks for your email" 
 
 chk_error_res = "Sorry this isn't available"
-
+# all configurations
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'hjshjhdjahkjshkjdhjs'
@@ -40,7 +40,7 @@ def create_app():
     mail = Mail()
     mail.init_app(app)
 
-
+    # making blueprint of these files
     from .views import views
     from .auth import auth
 
@@ -63,6 +63,7 @@ def create_app():
     return app
 
 
+# create database.db file if not exist in directory
 def create_database(app):
     if not path.exists('src/' + DB_NAME):
         db.create_all(app=app)
