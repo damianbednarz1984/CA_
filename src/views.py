@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from .models import Rooms, User,Booking
 from . import db,UPLOAD_FOLDER,  mail_user, mail_subject, mail_response
 import os
+import stripe
 import shutil
 from datetime import date, timedelta
 import datetime
