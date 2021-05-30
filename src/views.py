@@ -3,9 +3,9 @@ from flask_login import login_required, current_user
 from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models import Rooms, User,Booking
-from . import db,UPLOAD_FOLDER,  mail_user, mail_subject, mail_response
+from . import db,UPLOAD_FOLDER,  mail_user, mail_subject, mail_response,chk_error_res
 import os
-import stripe
+
 import shutil
 from datetime import date, timedelta
 import datetime
@@ -92,7 +92,7 @@ def total_days(check_in, check_out):
     return (chk_out - chk_in).days
 
 
-@views.route("/room_book_confirm", methods=["GET", "POST"])
+@views.route("/room_book_confirm", methods=["GET", "POST"])# dates are added to DB but I can't disply it in user dashboard. it is not working properlly 
 @login_required
 def room_book_confirm():
 	check_booking_expire()
@@ -222,34 +222,4 @@ def room_book_payment():
     return redirect(url_for("views.user_personal_info"))
 
 
-@views.route("/room_book_payment", methods=["POST"])
-@login_required
-def room_book_payment():
-    userID = request.form.get("user_id")
-    roomID = request.form.get("room_id")
-    check_in = request.form.get("check_in")
-    check_out = request.form.get("check_out")
-    amount = request.form.get("price")+"00"
-    earn = request.form.get("price")
-    email = request.form.get("email")
-    description = request.form.get("description")
-    get_user_mail = User.query.filter_by(id=userID).first()
-    room_data = Rooms.query.filter_by(id=roomID).first()
-    chk_in_y = check_in.split("-")[0]
-    chk_in_m = check_in.split("-")[1]
-    chk_in_d = check_in.split("-")[2]
-    chk_out_y = check_out.split("-")[0]
-    chk_out_m = check_out.split("-")[1]
-    chk_out_d = check_out.split("-")[2]
-    totalDays = total_days(check_in, check_out)
-    expireDate = datetime.datetime.strptime(check_out, "%Y-%m-%d").date() + timedelta(days=1)
-    check_booking_expire()
 
-    add_new_book = Booking(check_in_y=chk_in_y, check_in_m=chk_in_m, check_in_d=chk_in_d, check_out_y=chk_out_y, check_out_m=chk_out_m, check_out_d=chk_out_d, chk_in_full=check_in, chk_out_full=check_out, total_days=totalDays, reserved_by=userID, reserved_by_user=get_user_mail.email, reserved_room=roomID, reserved_room_title=room_data.title, reserved_room_thumb=room_data.thumb, reserved_room_price=room_data.price, expire_date=expireDate)
-
-
-
-    db.session.add(add_new_book)
-    db.session.commit()
-    flash(f"Thank you {current_user.fname}, for making purchase. Room has been reserved for {totalDays} days", category="success")
-    return redirect(url_for("views.user_personal_info"))	
